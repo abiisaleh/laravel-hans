@@ -10,6 +10,7 @@ use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
@@ -17,6 +18,7 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\TextColumn\TextColumnSize;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
@@ -47,8 +49,7 @@ class SuratMasukResource extends Resource
                     ->columns(2)
                     ->visibleOn('edit'),
                 TextInput::make('nomor')
-                    ->required()
-                    ->unique(),
+                    ->required(),
                 DatePicker::make('tgl')
                     ->label('Tanggal')
                     ->required(),
@@ -57,6 +58,15 @@ class SuratMasukResource extends Resource
                     ->required(),
                 TextInput::make('asal')
                     ->required(),
+                TextInput::make('sifat')
+                    ->required(),
+                Select::make('disposisi')
+                    ->options([
+                        'Kepala Bagian Pemerintahan Umum' => 'Kepala Bagian Pemerintahan Umum',
+                        'Kepala Bagian Pemerintahan Kampung dan Kelurahan' => 'Kepala Bagian Pemerintahan Kampung dan Kelurahan',
+                        'Kepala Bagian Pengembangan Wilayah' => 'Kepala Bagian Pengembangan Wilayah',
+                        'Kepala Bagian Pemerintahan Pengkajian dan Pengembangan Otonomi Khusus' => 'Kepala Bagian Pemerintahan Pengkajian dan Pengembangan Otonomi Khusus',
+                    ]),
                 Textarea::make('perihal')
                     ->rows(3)
                     ->required(),
@@ -78,8 +88,16 @@ class SuratMasukResource extends Resource
                 TextColumn::make('tgl_terima')
                     ->label('Diterima'),
                 TextColumn::make('asal')
+                    ->limit(25)
+                    ->searchable(),
+                TextColumn::make('sifat')
+                    ->searchable(),
+                TextColumn::make('disposisi')
+                    ->limit(25)
+                    ->tooltip(fn (SuratMasuk $record): string => $record->disposisi)
                     ->searchable(),
                 TextColumn::make('perihal')
+                    ->limit(25)
                     ->searchable(),
             ])
             ->filters([
@@ -100,7 +118,7 @@ class SuratMasukResource extends Resource
                 Action::make('file')
                     ->icon('heroicon-o-document')
                     ->color('success')
-                    ->url(fn (SuratMasuk $record): string => '/storage/'.$record->file)
+                    ->url(fn (SuratMasuk $record): string => '/storage/' . $record->file)
                     ->openUrlInNewTab()
             ])
             ->bulkActions([
@@ -110,14 +128,14 @@ class SuratMasukResource extends Resource
                 ]),
             ]);
     }
-    
+
     public static function getRelations(): array
     {
         return [
             //
         ];
     }
-    
+
     public static function getPages(): array
     {
         return [
@@ -125,5 +143,5 @@ class SuratMasukResource extends Resource
             'create' => Pages\CreateSuratMasuk::route('/create'),
             'edit' => Pages\EditSuratMasuk::route('/{record}/edit'),
         ];
-    } 
+    }
 }
