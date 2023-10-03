@@ -94,7 +94,7 @@ class SuratMasukResource extends Resource
                     ->searchable(),
                 TextColumn::make('disposisi')
                     ->limit(25)
-                    ->tooltip(fn (SuratMasuk $record): string => $record->disposisi)
+                    ->tooltip(fn (SuratMasuk $record): string => $record->disposisi ?? '')
                     ->searchable(),
                 TextColumn::make('perihal')
                     ->limit(25)
