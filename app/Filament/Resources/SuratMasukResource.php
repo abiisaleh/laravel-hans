@@ -8,16 +8,21 @@ use App\Models\SuratMasuk;
 use Filament\Forms;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Placeholder;
+use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Actions\Action;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Livewire\Features\SupportQueryString\BaseUrl;
+use pxlrbt\FilamentExcel\Actions\Tables\ExportBulkAction;
 
 class SuratMasukResource extends Resource
 {
@@ -33,17 +38,32 @@ class SuratMasukResource extends Resource
     {
         return $form
             ->schema([
-                TextInput::make('nomor'),
+                Section::make([
+                    Placeholder::make('Dibuat')
+                        ->content(fn (SuratMasuk $record): string => $record->created_at->toFormattedDateString()),
+                    Placeholder::make('Diubah')
+                        ->content(fn (SuratMasuk $record): string => $record->updated_at->toFormattedDateString()),
+                ])
+                    ->columns(2)
+                    ->visibleOn('edit'),
+                TextInput::make('nomor')
+                    ->required()
+                    ->unique(),
                 DatePicker::make('tgl')
-                    ->label('Tanggal'),
+                    ->label('Tanggal')
+                    ->required(),
                 DatePicker::make('tgl_terima')
-                    ->label('Tanggal diterima'),
-                TextInput::make('asal'),
+                    ->label('Tanggal diterima')
+                    ->required(),
+                TextInput::make('asal')
+                    ->required(),
                 Textarea::make('perihal')
-                    ->rows(3),
+                    ->rows(3)
+                    ->required(),
                 FileUpload::make('file')
                     ->acceptedFileTypes(['application/pdf'])
-                    ->downloadable(),
+                    ->downloadable()
+                    ->required(),
             ]);
     }
 
@@ -76,11 +96,17 @@ class SuratMasukResource extends Resource
                     })
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                // Tables\Actions\EditAction::make(),
+                Action::make('file')
+                    ->icon('heroicon-o-document')
+                    ->color('success')
+                    ->url(fn (SuratMasuk $record): string => '/storage/'.$record->file)
+                    ->openUrlInNewTab()
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
+                    ExportBulkAction::make()
                 ]),
             ]);
     }
@@ -99,5 +125,5 @@ class SuratMasukResource extends Resource
             'create' => Pages\CreateSuratMasuk::route('/create'),
             'edit' => Pages\EditSuratMasuk::route('/{record}/edit'),
         ];
-    }    
+    } 
 }

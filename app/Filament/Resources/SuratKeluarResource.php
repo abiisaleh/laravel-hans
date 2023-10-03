@@ -8,16 +8,20 @@ use App\Models\SuratKeluar;
 use Filament\Forms;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Placeholder;
+use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Actions\Action;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use pxlrbt\FilamentExcel\Actions\Tables\ExportBulkAction;
 
 class SuratKeluarResource extends Resource
 {
@@ -33,15 +37,29 @@ class SuratKeluarResource extends Resource
     {
         return $form
             ->schema([
-                TextInput::make('nomor'),
+                Section::make([
+                    Placeholder::make('Dibuat')
+                        ->content(fn (SuratKeluar $record): string => $record->created_at->toFormattedDateString()),
+                    Placeholder::make('Diubah')
+                        ->content(fn (SuratKeluar $record): string => $record->updated_at->toFormattedDateString()),
+                ])
+                    ->columns(2)
+                    ->visibleOn('edit'),
+                TextInput::make('nomor')
+                    ->required()
+                    ->unique(),
                 DatePicker::make('tgl')
-                    ->label('Tanggal'),
-                TextInput::make('tujuan'),
+                    ->label('Tanggal')
+                    ->required(),
+                TextInput::make('tujuan')
+                    ->required(),
                 Textarea::make('perihal')
-                    ->rows(3),
+                    ->rows(3)
+                    ->required(),
                 FileUpload::make('file')
                     ->acceptedFileTypes(['application/pdf'])
-                    ->downloadable(),
+                    ->downloadable()
+                    ->required(),
             ]);
     }
 
@@ -72,11 +90,17 @@ class SuratKeluarResource extends Resource
                     })
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                // Tables\Actions\EditAction::make(),
+                Action::make('file')
+                    ->icon('heroicon-o-document')
+                    ->color('success')
+                    ->url(fn (SuratKeluar $record): string => '/storage/'.$record->file)
+                    ->openUrlInNewTab()
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
+                    ExportBulkAction::make()
                 ]),
             ]);
     }
