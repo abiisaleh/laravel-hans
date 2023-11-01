@@ -12,7 +12,6 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('surat_masuks', function (Blueprint $table) {
-            $table->string('sifat')->nullable();
             $table->string('disposisi')->nullable();
         });
     }

@@ -14,10 +14,11 @@ return new class extends Migration
         Schema::create('surat_masuks', function (Blueprint $table) {
             $table->id();
             $table->string('nomor');
-            $table->date('tgl');
-            $table->date('tgl_terima');
+            $table->date('tanggal');
+            $table->date('diterima');
             $table->string('asal');
             $table->string('perihal');
+            $table->string('sifat');
             $table->string('file');
             $table->timestamps();
         });

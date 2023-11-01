@@ -14,9 +14,21 @@ class DatabaseSeeder extends Seeder
     {
         // \App\Models\User::factory(10)->create();
 
-        // \App\Models\User::factory()->create([
-        //     'name' => 'Test User',
-        //     'email' => 'test@example.com',
-        // ]);
+        \App\Models\User::factory()->create([
+            'name' => 'admin',
+            'email' => 'admin@demo.com',
+            'password' => 'demo1234',
+        ]);
+
+        $data = [
+            'Kepala Bagian Pemerintahan Umum',
+            'Kepala Bagian Pemerintahan Kampung dan Kelurahan',
+            'Kepala Bagian Pengembangan Wilayah',
+            'Kepala Bagian Pemerintahan Pengkajian dan Pengembangan Otonomi Khusus',
+        ];
+
+        foreach ($data as $record) {
+            \App\Models\Bagian::create(['nama' => $record]);
+        }
     }
 }

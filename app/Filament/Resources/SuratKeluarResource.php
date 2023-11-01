@@ -48,8 +48,7 @@ class SuratKeluarResource extends Resource
                 TextInput::make('nomor')
                     ->required()
                     ->unique(),
-                DatePicker::make('tgl')
-                    ->label('Tanggal')
+                DatePicker::make('tanggal')
                     ->required(),
                 TextInput::make('tujuan')
                     ->required(),
@@ -94,7 +93,7 @@ class SuratKeluarResource extends Resource
                 Action::make('file')
                     ->icon('heroicon-o-document')
                     ->color('success')
-                    ->url(fn (SuratKeluar $record): string => '/storage/'.$record->file)
+                    ->url(fn (SuratKeluar $record): string => '/storage/' . $record->file)
                     ->openUrlInNewTab()
             ])
             ->bulkActions([
@@ -104,14 +103,14 @@ class SuratKeluarResource extends Resource
                 ]),
             ]);
     }
-    
+
     public static function getRelations(): array
     {
         return [
             //
         ];
     }
-    
+
     public static function getPages(): array
     {
         return [
@@ -119,5 +118,5 @@ class SuratKeluarResource extends Resource
             'create' => Pages\CreateSuratKeluar::route('/create'),
             'edit' => Pages\EditSuratKeluar::route('/{record}/edit'),
         ];
-    }    
+    }
 }

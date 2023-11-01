@@ -50,23 +50,18 @@ class SuratMasukResource extends Resource
                     ->visibleOn('edit'),
                 TextInput::make('nomor')
                     ->required(),
-                DatePicker::make('tgl')
-                    ->label('Tanggal')
+                DatePicker::make('tanggal')
                     ->required(),
-                DatePicker::make('tgl_terima')
-                    ->label('Tanggal diterima')
+                DatePicker::make('diterima')
                     ->required(),
                 TextInput::make('asal')
                     ->required(),
                 TextInput::make('sifat')
                     ->required(),
                 Select::make('disposisi')
-                    ->options([
-                        'Kepala Bagian Pemerintahan Umum' => 'Kepala Bagian Pemerintahan Umum',
-                        'Kepala Bagian Pemerintahan Kampung dan Kelurahan' => 'Kepala Bagian Pemerintahan Kampung dan Kelurahan',
-                        'Kepala Bagian Pengembangan Wilayah' => 'Kepala Bagian Pengembangan Wilayah',
-                        'Kepala Bagian Pemerintahan Pengkajian dan Pengembangan Otonomi Khusus' => 'Kepala Bagian Pemerintahan Pengkajian dan Pengembangan Otonomi Khusus',
-                    ]),
+                    ->multiple()
+                    ->preload()
+                    ->relationship('bagian', 'nama'),
                 Textarea::make('perihal')
                     ->rows(3)
                     ->required(),
@@ -83,18 +78,14 @@ class SuratMasukResource extends Resource
             ->columns([
                 TextColumn::make('nomor')
                     ->searchable(),
-                TextColumn::make('tgl')
-                    ->label('Tanggal'),
-                TextColumn::make('tgl_terima')
-                    ->label('Diterima'),
+                TextColumn::make('tanggal')
+                    ->sortable(),
+                TextColumn::make('diterima')
+                    ->sortable(),
                 TextColumn::make('asal')
                     ->limit(25)
                     ->searchable(),
                 TextColumn::make('sifat')
-                    ->searchable(),
-                TextColumn::make('disposisi')
-                    ->limit(25)
-                    ->tooltip(fn (SuratMasuk $record): string => $record->disposisi ?? '')
                     ->searchable(),
                 TextColumn::make('perihal')
                     ->limit(25)
