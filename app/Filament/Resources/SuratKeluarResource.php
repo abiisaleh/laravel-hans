@@ -68,7 +68,7 @@ class SuratKeluarResource extends Resource
             ->columns([
                 TextColumn::make('nomor')
                     ->searchable(),
-                TextColumn::make('tgl')
+                TextColumn::make('tanggal')
                     ->label('Tanggal'),
                 TextColumn::make('tujuan')
                     ->searchable(),
